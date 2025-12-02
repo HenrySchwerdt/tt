@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/HenrySchwerdt/tt/models"
 )
@@ -18,11 +17,11 @@ func RenderProjectTree(projects []*models.Project) {
 	}
 }
 
-func formatDuration(d time.Duration) string {
-	h := int(d.Hours())
-	m := int(d.Minutes()) % 60
-	return fmt.Sprintf("%dh %dm", h, m)
-}
+// func formatDuration(d time.Duration) string {
+// 	h := int(d.Hours())
+// 	m := int(d.Minutes()) % 60
+// 	return fmt.Sprintf("%dh %dm", h, m)
+// }
 
 func renderNode(p *models.Project, prefix string, last bool) {
 	// tree branch characters
@@ -33,7 +32,7 @@ func renderNode(p *models.Project, prefix string, last bool) {
 		connector = "├─ "
 	}
 
-	fmt.Println(prefix + connector + p.Name + " " + formatDuration(p.TotalTime))
+	fmt.Println(prefix + connector + p.Name + " ") // TODO: set total time
 
 	// next prefix
 	var newPrefix string
@@ -56,20 +55,18 @@ func renderNode(p *models.Project, prefix string, last bool) {
 func MockProjects() []*models.Project {
 	return []*models.Project{
 		{
-			Name:      "PhD",
-			TotalTime: 12*time.Hour + 35*time.Minute,
-			Finished:  false,
+			Name:     "PhD",
+			Finished: false,
 			Children: []*models.Project{
-				{Name: "Research", TotalTime: 5*time.Hour + 20*time.Minute},
-				{Name: "Writing", TotalTime: 7*time.Hour + 15*time.Minute},
+				{Name: "Research"},
+				{Name: "Writing"},
 			},
 		},
 		{
-			Name:      "Side Project",
-			TotalTime: 3*time.Hour + 10*time.Minute,
-			Finished:  true,
+			Name:     "Side Project",
+			Finished: true,
 			Children: []*models.Project{
-				{Name: "Experiment", TotalTime: 3*time.Hour + 10*time.Minute, Finished: true},
+				{Name: "Experiment"},
 			},
 		},
 	}
