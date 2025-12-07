@@ -15,7 +15,7 @@ var RootCmd = &cobra.Command{
 
 const MAJOR = 0
 const MINOR = 0
-const PATCH = 2
+const PATCH = 4
 
 func DefaultDBPath() string {
 	var configDir string
