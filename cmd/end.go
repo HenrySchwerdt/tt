@@ -1,32 +1,31 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/HenrySchwerdt/tt/db"
-	"github.com/HenrySchwerdt/tt/tui"
 
 	"github.com/spf13/cobra"
 )
 
-var LsCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "List projects in a modern TUI",
+var EndCmd = &cobra.Command{
+	Use:   "end",
+	Short: "Creates a project with the given path",
 	Run: func(cmd *cobra.Command, args []string) {
-
 		db, err := db.Init("./times.db")
 		if err != nil {
 			log.Fatalln(err)
 		}
-		projects, err := db.GetAllProjectsRecursive()
+
+		err = db.EndTimeEntry()
 		if err != nil {
 			log.Fatalln(err)
 		}
-		tui.RenderProjectsTree(projects)
-
+		fmt.Printf("Time-Entry endend\n") // log logged time
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(LsCmd)
+	RootCmd.AddCommand(EndCmd)
 }

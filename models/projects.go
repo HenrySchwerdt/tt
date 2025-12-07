@@ -1,7 +1,10 @@
 package models
 
-import "time"
-import "github.com/uptrace/bun"
+import (
+	"time"
+
+	"github.com/uptrace/bun"
+)
 
 type Project struct {
 	bun.BaseModel `bun:"table:projects,alias:p"`
@@ -12,6 +15,7 @@ type Project struct {
 	Name      string    `bun:"name,notnull"`
 	CreatedAt time.Time `bun:"created_at,notnull,default:CURRENT_TIMESTAMP"`
 	Finished  bool      `bun:"finished,notnull,default:false"`
+	TimeSpend int64     `bun:"-"`
 
 	Children []*Project `bun:"rel:has-many,join:id=parent_id"`
 }
