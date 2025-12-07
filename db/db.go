@@ -296,7 +296,7 @@ func (d *Database) StartTimeEntry(path string) error {
 	return nil
 }
 
-func (d *Database) EndTimeEntry() error {
+func (d *Database) EndTimeEntry(message string) error {
 	var entry models.TimeEntry
 	err := d.client.NewSelect().
 		Model(&entry).
@@ -315,6 +315,10 @@ func (d *Database) EndTimeEntry() error {
 
 	entry.End = &endTime
 	entry.Delta = &delta
+
+	if message != "" {
+		entry.Message = &message
+	}
 
 	_, err = d.client.NewUpdate().
 		Model(&entry).
@@ -416,4 +420,83 @@ func (d *Database) GetAllProjectsRecursive() ([]*models.Project, error) {
 		}
 	}
 	return roots, nil
+}
+
+func (d *Database) GetProjectById(id int64) (*models.Project, error) {
+	var p models.Project
+	err := d.client.NewSelect().
+		Model(&p).
+		Where("id = ?", id).
+		Limit(1).
+		Scan(d.ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &p, nil
+}
+
+func (d *Database) GetTimelineForProject(path string) ([]models.FeedItem, error) {
+	// Load project with full tree
+	root, err := d.GetProjectByPathRecursive2(path)
+	if err != nil {
+		return nil, err
+	}
+	if root == nil {
+		return nil, ErrProjectDoesNotExist
+	}
+
+	// Collect all project IDs
+	var ids []int64
+	var collect func(p *models.Project)
+	collect = func(p *models.Project) {
+		ids = append(ids, p.ID)
+		for _, c := range p.Children {
+			collect(c)
+		}
+	}
+	collect(root)
+
+	// Query time entries for all projects
+	var entries []models.TimeEntry
+	err = d.client.NewSelect().
+		Model(&entries).
+		Where("project_id IN (?)", bun.In(ids)).
+		Where("end IS NOT NULL").
+		Order("start ASC").
+		Scan(d.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert to feed items
+	feed := make([]models.FeedItem, 0, len(entries))
+
+	for _, e := range entries {
+		var dur time.Duration
+		if e.Delta != nil {
+			dur = time.Duration(*e.Delta) * time.Second
+		} else if e.End != nil {
+			dur = e.End.Sub(e.Start)
+		}
+
+		// get path for each ID
+		p, err := d.GetProjectById(e.ProjectID)
+		if err != nil {
+			return nil, err
+		}
+
+		feed = append(feed, models.FeedItem{
+			ProjectPath: p.Path,
+			Start:       e.Start,
+			End:         *e.End,
+			Duration:    dur,
+			Message:     "",
+		})
+
+		if e.Message != nil {
+			feed[len(feed)-1].Message = *e.Message
+		}
+	}
+
+	return feed, nil
 }

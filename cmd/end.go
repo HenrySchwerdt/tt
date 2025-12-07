@@ -9,23 +9,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var message string
+
 var EndCmd = &cobra.Command{
 	Use:   "end",
-	Short: "Creates a project with the given path",
+	Short: "Ends the current time entry",
 	Run: func(cmd *cobra.Command, args []string) {
 		db, err := db.Init("./times.db")
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		err = db.EndTimeEntry()
+		err = db.EndTimeEntry(message)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		fmt.Printf("Time-Entry endend\n") // log logged time
+
+		fmt.Println("Time entry ended.")
+		if message != "" {
+			fmt.Printf("Message: %q\n", message)
+		}
 	},
 }
 
 func init() {
+	EndCmd.Flags().StringVarP(&message, "message", "m", "", "Optional message for this time entry")
 	RootCmd.AddCommand(EndCmd)
 }

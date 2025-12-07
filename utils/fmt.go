@@ -24,3 +24,19 @@ func FormatDuration(seconds int64) string {
 	}
 	return fmt.Sprintf("%ds", s)
 }
+
+func FormatDuration2(d time.Duration) string {
+	sec := int64(d.Seconds())
+	h := sec / 3600
+	m := (sec % 3600) / 60
+	s := sec % 60
+
+	switch {
+	case h > 0:
+		return fmt.Sprintf("%dh %dm %ds", h, m, s)
+	case m > 0:
+		return fmt.Sprintf("%dm %ds", m, s)
+	default:
+		return fmt.Sprintf("%ds", s)
+	}
+}
