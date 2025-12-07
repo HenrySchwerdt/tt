@@ -19,7 +19,7 @@ var RemoveCmd = &cobra.Command{
 
 		projectName := args[0]
 
-		db, err := db.Init("./times.db")
+		db, err := db.Init(DefaultDBPath())
 		if err != nil {
 			log.Fatalln(err)
 		}

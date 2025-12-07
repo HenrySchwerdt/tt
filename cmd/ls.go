@@ -14,7 +14,7 @@ var LsCmd = &cobra.Command{
 	Short: "List projects in a modern TUI",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		db, err := db.Init("./times.db")
+		db, err := db.Init(DefaultDBPath())
 		if err != nil {
 			log.Fatalln(err)
 		}

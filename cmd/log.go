@@ -19,7 +19,7 @@ var LogCmd = &cobra.Command{
 
 		projectPath := args[0]
 
-		database, err := db.Init("./times.db")
+		database, err := db.Init(DefaultDBPath())
 		if err != nil {
 			log.Fatalln(err)
 		}

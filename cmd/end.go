@@ -15,7 +15,7 @@ var EndCmd = &cobra.Command{
 	Use:   "end",
 	Short: "Ends the current time entry",
 	Run: func(cmd *cobra.Command, args []string) {
-		db, err := db.Init("./times.db")
+		db, err := db.Init(DefaultDBPath())
 		if err != nil {
 			log.Fatalln(err)
 		}
