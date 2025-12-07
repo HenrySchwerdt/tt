@@ -1,29 +1,22 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/HenrySchwerdt/tt/db"
 	"github.com/HenrySchwerdt/tt/tui"
+	"github.com/HenrySchwerdt/tt/utils"
 
 	"github.com/spf13/cobra"
 )
 
 var LsCmd = &cobra.Command{
 	Use:   "ls",
-	Short: "List projects in a modern TUI",
+	Short: "List projects and project structure",
 	Run: func(cmd *cobra.Command, args []string) {
-
 		db, err := db.Init(DefaultDBPath())
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utils.LogAndExitOnError(err)
 		projects, err := db.GetAllProjectsRecursive()
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utils.LogAndExitOnError(err)
 		tui.RenderProjectsTree(projects)
-
 	},
 }
 

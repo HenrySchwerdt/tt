@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/HenrySchwerdt/tt/db"
+	"github.com/HenrySchwerdt/tt/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -16,19 +16,12 @@ var EndCmd = &cobra.Command{
 	Short: "Ends the current time entry",
 	Run: func(cmd *cobra.Command, args []string) {
 		db, err := db.Init(DefaultDBPath())
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utils.LogAndExitOnError(err)
 
 		err = db.EndTimeEntry(message)
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utils.LogAndExitOnError(err)
 
 		fmt.Println("Time entry ended.")
-		if message != "" {
-			fmt.Printf("Message: %q\n", message)
-		}
 	},
 }
 

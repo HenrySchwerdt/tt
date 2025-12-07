@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -38,5 +39,12 @@ func FormatDuration2(d time.Duration) string {
 		return fmt.Sprintf("%dm %ds", m, s)
 	default:
 		return fmt.Sprintf("%ds", s)
+	}
+}
+
+func LogAndExitOnError(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }

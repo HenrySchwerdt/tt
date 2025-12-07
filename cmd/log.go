@@ -1,10 +1,12 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/HenrySchwerdt/tt/db"
+	tterrors "github.com/HenrySchwerdt/tt/tt_errors"
 	"github.com/HenrySchwerdt/tt/tui"
+	"github.com/HenrySchwerdt/tt/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -14,23 +16,19 @@ var LogCmd = &cobra.Command{
 	Short: "Creates a project with the given path",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			log.Fatalln("you must provide a project path")
+			utils.LogAndExitOnError(tterrors.ErrNoProjectPath)
 		}
 
 		projectPath := args[0]
 
 		database, err := db.Init(DefaultDBPath())
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utils.LogAndExitOnError(err)
 
 		feed, err := database.GetTimelineForProject(projectPath)
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utils.LogAndExitOnError(err)
 
 		if len(feed) == 0 {
-			log.Println("No finished time entries found for project", projectPath)
+			fmt.Println("No finished time entries found for project", projectPath)
 			return
 		}
 

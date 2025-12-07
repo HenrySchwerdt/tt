@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/HenrySchwerdt/tt/db"
+	tterrors "github.com/HenrySchwerdt/tt/tt_errors"
 	"github.com/HenrySchwerdt/tt/tui"
+	"github.com/HenrySchwerdt/tt/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -14,20 +14,13 @@ var CreateCmd = &cobra.Command{
 	Short: "Creates a project with the given path",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			log.Fatalln("you must provide a project name")
+			utils.LogAndExitOnError(tterrors.ErrNoProjectPath)
 		}
-
 		projectName := args[0]
-
 		db, err := db.Init(DefaultDBPath())
-		if err != nil {
-			log.Fatalln(err)
-		}
-
+		utils.LogAndExitOnError(err)
 		project, err := db.CreateProject(projectName)
-		if err != nil {
-			log.Fatalln(err)
-		}
+		utils.LogAndExitOnError(err)
 		tui.RenderProjectTable(project)
 	},
 }

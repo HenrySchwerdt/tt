@@ -10,14 +10,18 @@ import (
 
 var RootCmd = &cobra.Command{
 	Use:   "tt",
-	Short: "Terminal Time Tracker",
+	Short: "Terminal Tracker",
 }
+
+const MAJOR = 0
+const MINOR = 0
+const PATCH = 2
 
 func DefaultDBPath() string {
 	var configDir string
 
 	if runtime.GOOS == "windows" {
-		configDir = os.Getenv("APPDATA") // typically C:\Users\<User>\AppData\Roaming
+		configDir = os.Getenv("APPDATA")
 	} else {
 		configDir = os.Getenv("XDG_CONFIG_HOME")
 		if configDir == "" {
@@ -26,7 +30,7 @@ func DefaultDBPath() string {
 	}
 
 	dbDir := filepath.Join(configDir, "tt")
-	_ = os.MkdirAll(dbDir, os.ModePerm) // ensure folder exists
+	_ = os.MkdirAll(dbDir, os.ModePerm)
 
 	return filepath.Join(dbDir, "tt.db")
 }
